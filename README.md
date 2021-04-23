@@ -11,11 +11,7 @@ Python based command line interface `trezorctl` https://wiki.trezor.io/Using_tre
     ```
 - Install python dependencies
     ```
-    pip3 install setuptools wheel attrs web3 rlp
-    ```
-- Install `trezorctl`
-    ```
-    pip3 install trezor
+    pip3 install setuptools wheel attrs web3 rlp trezor
     ```
  - update your `$PATH` by sourcing your profile so that `trezorctl` is available in your path.
  Execute the following to confirm `trezorctl` has been installed.

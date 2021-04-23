@@ -56,7 +56,8 @@ class Trezor {
       // --gas-price is a string integer (wei)
       // --nonce is an integer
       // --data is a string hex: "0x1234"
-      // value is a string integer (wei)
+      // "to" is a string hex: "0x1234"
+      // "value" is a string integer (wei)
       response = trezorCtl(
         `ethereum sign-tx --address "${path}" --nonce ${txn.nonce} --gas-limit ${txn.gasLimit} --gas-price "${txn.gasPrice}" --data "${txn.data}" "${txn.to}" "${txn.value}"`
       );
@@ -78,31 +79,7 @@ export default class TrezorWalletProvider extends HookedWalletSubprovider {
   // }
 }
 
-// test driver
-let trezor = new Trezor({ chainId: 77 });
-trezor.signTransaction(
-  {
-    to: "0x7314e0f1c0e28474bdb6be3e2c3e0453255188f8",
-    value: "100",
-    data: "0x01",
-    nonce: 0,
-    gasPrice: "20000000000",
-    gasLimit: 300000,
-  },
-  (err: string, result: string) => {
-    if (err) {
-      console.log(`trezor error: ${err}`);
-    } else {
-      console.log(`signed txn: ${result}`);
-    }
-    process.exit();
-  }
-);
-
 function trezorCtl(args: string): string {
-  // Is there a way to actually show trezorctl prompts and allow trezorctl to
-  // read keyboard input? It would be nice for the unlock screen. I swear I got
-  // that working at one point...
   let stdout = execSync(`trezorctl ${args}`, {
     // this allows the CLI to prompt for a PIN if needed, but also for us to
     // capture the result of the trezor command in stdout
@@ -123,3 +100,24 @@ function trezorCtl(args: string): string {
 //   }
 //   return hex;
 // }
+
+// test driver
+let trezor = new Trezor({ chainId: 77 });
+trezor.signTransaction(
+  {
+    to: "0x7314e0f1c0e28474bdb6be3e2c3e0453255188f8",
+    value: "100",
+    data: "0x01",
+    nonce: 0,
+    gasPrice: "20000000000",
+    gasLimit: 300000,
+  },
+  (err: string, result: string) => {
+    if (err) {
+      console.log(`trezor error: ${err}`);
+    } else {
+      console.log(`signed txn: ${result}`);
+    }
+    process.exit();
+  }
+);

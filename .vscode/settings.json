@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.lintTask.enable": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

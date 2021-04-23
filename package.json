@@ -1,0 +1,19 @@
+{
+  "name": "trezor-wallet-provider",
+  "version": "1.0.0",
+  "description": "A CLI based web3 trezor wallet provider",
+  "main": "index.js",
+  "repository": "https://github.com/cardstack/trezor-wallet-provider.git",
+  "author": "Hassan Abdel-Rahman <hassan.abdelrahman@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@trufflesuite/web3-provider-engine": "^15.0.13-1",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-prettier": "^8.2.0",
+    "prettier": "^2.2.1"
+  }
+}

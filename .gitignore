@@ -1,8 +1,3 @@
 node_modules
 *.log
 .DS_Store
-*.js
-*.js.map
-*.d.ts
-
-!.eslintrc.js

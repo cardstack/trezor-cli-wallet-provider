@@ -23,5 +23,12 @@
   },
   "volta": {
     "node": "14.16.1"
-  }
+  },
+  "keywords": [
+    "Trezor",
+    "Web3",
+    "web3 provider",
+    "ethereum",
+    "wallet"
+  ]
 }

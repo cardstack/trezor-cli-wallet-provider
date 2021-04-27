@@ -1,11 +1,11 @@
 const { execSync } = require("child_process");
 const Web3 = require("web3");
 const HookedWalletSubprovider = require("@trufflesuite/web3-provider-engine/subproviders/hooked-wallet.js");
-const numberToBN = require("number-to-bn"); // there is a bug in web3's BN that is not calculating hex correctly
+// there is a bug in web3's BN that is not calculating hex correctly, so we use this instead
+const numberToBN = require("number-to-bn");
+
 const { toChecksumAddress } = Web3.utils;
 const ETHEREUM_PATH = "m/44'/60'/0'/0";
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 function trezorCtl(args) {
   let stdout = execSync(`trezorctl ${args}`, {
@@ -19,7 +19,8 @@ function trezorCtl(args) {
 class Trezor {
   constructor(opts = {}) {
     this.opts = {
-      derivationPath: ETHEREUM_PATH,
+      chainId: 1,
+      derivationPathPrefix: ETHEREUM_PATH,
       numberOfAccounts: 1,
       ...opts,
     };
@@ -41,7 +42,9 @@ class Trezor {
     let accounts = [];
     for (let i = 0; i < this.opts.numberOfAccounts; i++) {
       accounts.push(
-        trezorCtl(`ethereum get-address -n "${this.opts.derivationPath}/${i}"`)
+        trezorCtl(
+          `ethereum get-address -n "${this.opts.derivationPathPrefix}/${i}"`
+        )
       );
     }
     return accounts;
@@ -54,16 +57,14 @@ class Trezor {
       gas: gasLimit,
       gasPrice,
       nonce,
-      chainId,
       value = "0x0",
     } = txn;
     from = toChecksumAddress(from);
     to = to !== "" ? toChecksumAddress(to) : to;
-    gasLimit = Number(numberToBN(gasLimit).toString());
+    gasLimit = numberToBN(gasLimit).toString();
     gasPrice = numberToBN(gasPrice).toString();
     value = numberToBN(value).toString();
-    nonce = Number(numberToBN(nonce).toString());
-    chainId = Number(numberToBN(chainId).toString());
+    nonce = numberToBN(nonce).toString();
     let addresses = this.getAccountsSync();
     let idx = addresses.findIndex((i) => i === from);
     if (idx === -1) {
@@ -72,7 +73,7 @@ class Trezor {
       );
     }
     if (idx > -1) {
-      const path = `${this.opts.derivationPath}/${idx}`;
+      const path = `${this.opts.derivationPathPrefix}/${idx}`;
       let response;
       try {
         // --gas-limit is an integer
@@ -83,7 +84,7 @@ class Trezor {
         // "to" is a string hex: "0x1234" (or empty string for contract creation)
         // "value" is a string integer (wei)
         response = trezorCtl(
-          `ethereum sign-tx --chain-id ${chainId} --address "${path}" --nonce ${nonce} --gas-limit ${gasLimit} --gas-price "${gasPrice}" --data "${txn.data}" "${to}" "${value}"`
+          `ethereum sign-tx --chain-id ${this.opts.chainId} --address "${path}" --nonce ${nonce} --gas-limit ${gasLimit} --gas-price "${gasPrice}" --data "${txn.data}" "${to}" "${value}"`
         );
       } catch (e) {
         cb(e.message);

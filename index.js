@@ -21,7 +21,7 @@ module.exports = function (url, opts = {}) {
 
 function addSendAsync(provider) {
   if (provider.sendAsync) {
-    return;
+    return provider;
   }
   if (!provider.send) throw new Error('Provider must have a "send" method');
 

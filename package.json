@@ -1,6 +1,6 @@
 {
   "name": "trezor-cli-wallet-provider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI based web3 trezor wallet provider",
   "main": "index.js",
   "repository": "https://github.com/cardstack/trezor-wallet-provider.git",

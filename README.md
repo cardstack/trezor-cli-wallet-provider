@@ -79,6 +79,8 @@ Please confirm action on your Trezor device.
 ```
 If the trezor is locked, it will first prompt you to enter your pin using the procedure described above.
 
+Here is a little video demo of the provider in action: https://www.loom.com/share/364c1321eadf488aaf767ad008365e44
+
 ## Additional Considerations
 Do note that this web3 provider does not seem to work with the OpenZeppelin CLI (if someone can figure
 out why, I'd love to get a PR). So if you'd like to use upgradeable contracts, I's suggest using

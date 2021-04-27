@@ -45,3 +45,41 @@ Python based command line interface `trezorctl` https://wiki.trezor.io/Using_tre
   You may bypass the CLI unlock prompt by using the Trezor Bridge to unlock your wallet
   (the CLI unlock is a bit of a mind puzzle 🤪). To do so, navigate to https://wallet.trezor.io,
   make sure your trezor is connected, and enter the PIN to unlock your trezor when prompted.
+
+  ## Configuring Truffle
+  To use this provider in truffle you can add this provider like so in your `truffle-config.json`:
+  ```js
+  const TrezorWalletProvider = require("trezor-cli-wallet-provider");
+  module.exports = {
+    networks: {
+      xdai: {
+        provider: function () {
+        return new TrezorWalletProvider("https://rpc.xdaichain.com/", {
+          chainId: 100,
+        });
+      },
+      gasPrice: 1000000000,
+      network_id: 100,
+      }
+    }
+  }
+  ```
+
+Where the constructor is initialized with a:
+- A JSON-RPC URL like infura, blockscout, etc.
+- An optional options object that can specify:
+  - `chainId` The chain ID of the network. This is exactly the same as the `network_id`, we provide it here too, because not all web3 clients initialize the txn object in a way that includes the chain ID. If this is not specified, then chain ID of `1` (Ethereum mainnet) is used as the default.
+  - `derivationPathPrefix` The derivation path prefix (not including the address index) to use. This defaults to `m/44'/60'/0'/0` which is the default derivation path for Ethereum.
+  - `numberOfAccounts` This is used to return address on the Trezor wallet. This defaults to just a single address (the first derivation path), but you can include more. There is a pretty significant performance penalty for additional addresses.
+
+When truffle migrate or a truffle script sign a transaction, a prompt will appear on the command line to
+confirm the details of the transaction, like so:
+```
+Please confirm action on your Trezor device.
+```
+If the trezor is locked, it will first prompt you to enter your pin using the procedure described above.
+
+## Additional Considerations
+Do note that this web3 provider does not seem to work with the OpenZeppelin CLI (if someone can figure
+out why, I'd love to get a PR). So if you'd like to use upgradeable contracts, I's suggest using
+`truffle migrate` paired with `@openzeppelin/truffle-upgrades` pkg https://docs.openzeppelin.com/upgrades-plugins/1.x/.

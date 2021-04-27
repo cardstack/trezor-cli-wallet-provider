@@ -47,7 +47,7 @@ Python based command line interface `trezorctl` https://wiki.trezor.io/Using_tre
   make sure your trezor is connected, and enter the PIN to unlock your trezor when prompted.
 
   ## Configuring Truffle
-  To use this provider in truffle you can add this provider like so in your `truffle-config.json`:
+  To use this provider in truffle you can add this provider like so in your `truffle-config.js`:
   ```js
   const TrezorWalletProvider = require("trezor-cli-wallet-provider");
   module.exports = {

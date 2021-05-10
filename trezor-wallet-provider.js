@@ -39,15 +39,19 @@ class Trezor {
   }
 
   getAccountsSync() {
-    let accounts = [];
+    if (this.cachedAccounts && this.cachedAccounts.length) {
+      return this.cachedAccounts;
+    }
+
+    this.cachedAccounts = [];
     for (let i = 0; i < this.opts.numberOfAccounts; i++) {
-      accounts.push(
+      this.cachedAccounts.push(
         trezorCtl(
           `ethereum get-address -n "${this.opts.derivationPathPrefix}/${i}"`
         )
       );
     }
-    return accounts;
+    return this.cachedAccounts;
   }
 
   signTransaction(txn, cb) {

@@ -44,6 +44,13 @@ class Trezor {
     }
 
     this.cachedAccounts = [];
+    if (this.opts.derivationPath) {
+      this.cachedAccounts.push(
+        trezorCtl(`ethereum get-address -n "${this.opts.derivationPath}"`)
+      );
+      return this.cachedAccounts;
+    }
+
     for (let i = 0; i < this.opts.numberOfAccounts; i++) {
       this.cachedAccounts.push(
         trezorCtl(
@@ -77,7 +84,9 @@ class Trezor {
       );
     }
     if (idx > -1) {
-      const path = `${this.opts.derivationPathPrefix}/${idx}`;
+      const path = this.opts.derivationPath
+        ? this.opts.derivationPath
+        : `${this.opts.derivationPathPrefix}/${idx}`;
       let response;
       try {
         // --gas-limit is an integer

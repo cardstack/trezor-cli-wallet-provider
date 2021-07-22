@@ -20,7 +20,7 @@ Python based command line interface `trezorctl` https://wiki.trezor.io/Using_tre
     ```
   - Install Trezor Bridge https://wiki.trezor.io/Trezor_Bridge. And reconnect your Trezor device after this step.
 
-  ## Unlocking Your Trezor
+  ## Unlocking Your Trezor (Model One only)
   The trezor will go into sleep mode after a specified period of inactivity (10 minute by default).
   When you are asked for PIN, you have to enter scrambled PIN. Follow the
   numbers shown on Trezor display and enter the their positions using the
@@ -46,6 +46,9 @@ Python based command line interface `trezorctl` https://wiki.trezor.io/Using_tre
   (the CLI unlock is a bit of a mind puzzle 🤪). To do so, navigate to https://wallet.trezor.io,
   make sure your trezor is connected, and enter the PIN to unlock your trezor when prompted.
 
+  ## Unlocking Your Trezor (Model T only)
+  For a Model T, then just unlock your Trezor from its screen before you start using it.
+
   ## Configuring Truffle
   To use this provider in truffle you can add this provider like so in your `truffle-config.js`:
   ```js
@@ -69,6 +72,7 @@ Where the constructor is initialized with a:
 - A JSON-RPC URL like infura, blockscout, etc.
 - An optional options object that can specify:
   - `chainId` The chain ID of the network. This is exactly the same as the `network_id`, we provide it here too, because not all web3 clients initialize the txn object in a way that includes the chain ID. If this is not specified, then chain ID of `1` (Ethereum mainnet) is used as the default.
+  - `derviationPath` A specific derivation path to use, e.g. `m/44'/60'/0'/0/13`. When this option is specified the only account available in your wallet will be the derivation path that you specify and the `derviationPathPrefix` and `numberOfAccounts` options will be ignored.
   - `derivationPathPrefix` The derivation path prefix (not including the address index) to use. This defaults to `m/44'/60'/0'/0` which is the default derivation path for Ethereum.
   - `numberOfAccounts` This is used to return address on the Trezor wallet. This defaults to just a single address (the first derivation path), but you can include more. There is a pretty significant performance penalty for additional addresses.
 

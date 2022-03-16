@@ -5,6 +5,8 @@ const HookedWalletSubprovider = require("@trufflesuite/web3-provider-engine/subp
 const numberToBN = require("number-to-bn");
 
 const { toChecksumAddress } = Web3.utils;
+const fs = require("fs");
+
 const ETHEREUM_PATH = "m/44'/60'/0'/0";
 
 function trezorCtl(args) {
@@ -108,6 +110,32 @@ class Trezor {
       }
     }
   }
+
+  signTypedMessage(txn, cb) {
+    let { from, data } = txn;
+    let addresses = this.getAccountsSync();
+    let idx = addresses.findIndex((i) => i === from);
+    const path = this.opts.derivationPath
+      ? this.opts.derivationPath
+      : `${this.opts.derivationPathPrefix}/${idx}`;
+    const file_path = "tmp.json";
+    fs.writeFileSync("tmp.json", JSON.stringify(data));
+    // need to create file because `ethereum sign-typed-data` takes file path as input
+    let response;
+    try {
+      let command = `ethereum sign-typed-data --address "${path}" ${file_path}`;
+      response = trezorCtl(command);
+    } catch (e) {
+      console.log(e);
+    }
+    if (response) {
+      let keyword = "signature: 0x";
+      let signedTxn = response.slice(
+        response.indexOf(keyword) + keyword.length
+      );
+      cb(null, signedTxn);
+    }
+  }
 }
 
 module.exports = class TrezorWalletProvider extends HookedWalletSubprovider {
@@ -116,6 +144,7 @@ module.exports = class TrezorWalletProvider extends HookedWalletSubprovider {
     super({
       getAccounts: trezor.getAccounts.bind(trezor),
       signTransaction: trezor.signTransaction.bind(trezor),
+      signTypedMessage: trezor.signTypedMessage.bind(trezor),
     });
   }
 };

@@ -121,7 +121,7 @@ class Trezor {
       : `${this.opts.derivationPathPrefix}/${idx}`;
     // tmp file created because `ethereum sign-typed-data` takes file path as input.
     tmp.file(
-      { postfix: ".json", prefix: "typedData--" },
+      { postfix: ".json" },
       function _tempFileCreated(err, filePath, fd, cleanupCallback) {
         if (err) throw err;
         let response;

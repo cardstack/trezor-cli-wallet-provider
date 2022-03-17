@@ -3,6 +3,7 @@ const Web3 = require("web3");
 const HookedWalletSubprovider = require("@trufflesuite/web3-provider-engine/subproviders/hooked-wallet.js");
 // there is a bug in web3's BN that is not calculating hex correctly, so we use this instead
 const numberToBN = require("number-to-bn");
+const tmp = require("tmp");
 
 const { toChecksumAddress } = Web3.utils;
 const fs = require("fs");
@@ -118,23 +119,31 @@ class Trezor {
     const path = this.opts.derivationPath
       ? this.opts.derivationPath
       : `${this.opts.derivationPathPrefix}/${idx}`;
-    const file_path = "tmp.json";
-    fs.writeFileSync("tmp.json", JSON.stringify(data));
-    // need to create file because `ethereum sign-typed-data` takes file path as input
-    let response;
-    try {
-      let command = `ethereum sign-typed-data --address "${path}" ${file_path}`;
-      response = trezorCtl(command);
-    } catch (e) {
-      console.log(e);
-    }
-    if (response) {
-      let keyword = "signature: 0x";
-      let signedTxn = response.slice(
-        response.indexOf(keyword) + keyword.length
-      );
-      cb(null, signedTxn);
-    }
+    tmp.file(
+      { postfix: ".json", prefix: "typedData--" },
+      function _tempFileCreated(err, filePath, fd, cleanupCallback) {
+        if (err) throw err;
+        // tmp file created because `ethereum sign-typed-data` takes file path as input
+        let response;
+        fs.writeFileSync(filePath, JSON.stringify(data), function (err) {
+          if (err) throw err;
+        });
+        try {
+          let command = `ethereum sign-typed-data --address "${path}" ${filePath}`;
+          response = trezorCtl(command);
+        } catch (e) {
+          console.log(e);
+        }
+        cleanupCallback();
+        if (response) {
+          let keyword = "signature: 0x";
+          let signedTxn = response.slice(
+            response.indexOf(keyword) + keyword.length
+          );
+          cb(null, signedTxn);
+        }
+      }
+    );
   }
 }
 

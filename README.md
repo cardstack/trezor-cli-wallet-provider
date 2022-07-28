@@ -3,6 +3,8 @@ A CLI based web3 trezor wallet provider. This provider relies on the Trezor wall
 Python based command line interface `trezorctl` https://wiki.trezor.io/Using_trezorctl_commands_with_Trezor
 . In order to use this you must ensure the `trezorctl` is installed correctly.
 
+**Note: Please ensure your trezor firmware is up-to-date**
+
 ## Installing `trezorctl`
 - Install python 3.5+
     ```

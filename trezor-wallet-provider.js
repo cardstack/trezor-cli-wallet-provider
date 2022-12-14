@@ -125,7 +125,12 @@ class Trezor {
       function _tempFileCreated(err, filePath, fd, cleanupCallback) {
         if (err) throw err;
         let response;
-        fs.writeFileSync(filePath, JSON.stringify(data), function (err) {
+
+        if (typeof data !== "string") {
+          data = JSON.stringify(data);
+        }
+
+        fs.writeFileSync(filePath, data, function (err) {
           if (err) throw err;
         });
         try {
